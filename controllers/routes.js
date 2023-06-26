@@ -14,12 +14,17 @@ router.post("/create", (req, res) => {
     try {
         const id = uuid_v4()
         const api = read(apiPath)
+        if (Object.keys(req.body).length < 4) {
+            throw Error("The post content cannot be empty")
+        }
         let newComment = req.body
         req.body.post_id = id
         api.push(newComment)
         save(api, apiPath)
     } catch(err) {
-        console.log(err)
+        res.status(500).json({
+            message: `${err}`
+        })
     }
 })
 // endpoint - UPDATE COMMENT
