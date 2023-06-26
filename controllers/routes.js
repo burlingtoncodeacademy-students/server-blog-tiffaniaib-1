@@ -6,20 +6,35 @@ const apiPath = "./api/blog.json"
 
 // endpoint - GET ALL COMMENTS
 //? GET api/
-router.get("/", (req,res) => {
+router.get("/", (req, res) => {
     try {
-    const allComments = read(apiPath) 
-    res.status(200).json({ allComments })
-    }catch{
-    res.status(500).json({
-        message: `${err}`
-    })
+        const allComments = read(apiPath)
+        res.status(200).json({ allComments })
+    } catch {
+        res.status(500).json({
+            message: `${err}`
+        })
     }
 })
 
 // endpoint - GET ONE COMMENT
 //? GET api/:id
-
+router.get("/:id", (req, res) => {
+    try {
+        const { id } = req.params
+        const api = read(apiPath)
+        const itemRequested = api.find(comment => comment.post_id === id)
+        if (!itemRequested) throw Error("No comment found")
+        res.status(200).json({
+            itemRequested
+        })
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({
+            message: `${err}`
+        })
+    }
+})
 
 // endpoint - CREATE NEW COMMENT
 //? POST api/create
@@ -34,7 +49,7 @@ router.post("/create", (req, res) => {
         req.body.post_id = id
         api.push(newComment)
         save(api, apiPath)
-    } catch(err) {
+    } catch (err) {
         res.status(500).json({
             message: `${err}`
         })
