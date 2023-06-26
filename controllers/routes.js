@@ -6,15 +6,28 @@ const apiPath = "./api/blog.json"
 
 // endpoint - GET ALL COMMENTS
 //? GET api/
+router.get("/", (req,res) => {
+    try {
+    const allComments = read(apiPath) 
+    res.status(200).json({ allComments })
+    }catch{
+    res.status(500).json({
+        message: `${err}`
+    })
+    }
+})
+
 // endpoint - GET ONE COMMENT
 //? GET api/:id
+
+
 // endpoint - CREATE NEW COMMENT
 //? POST api/create
 router.post("/create", (req, res) => {
     try {
         const id = uuid_v4()
         const api = read(apiPath)
-        if (Object.keys(req.body).length < 4) {
+        if (Object.keys(req.body).length === 0) {
             throw Error("The post content cannot be empty")
         }
         let newComment = req.body
@@ -27,10 +40,15 @@ router.post("/create", (req, res) => {
         })
     }
 })
+
 // endpoint - UPDATE COMMENT
 //? PUT api/update/:id
+
+
 // endpoint - DELETE COMMENT
 //? DELETE api/delete/:id
+
+
 
 
 module.exports = router
