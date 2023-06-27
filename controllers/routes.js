@@ -58,11 +58,47 @@ router.post("/create", (req, res) => {
 
 // endpoint - UPDATE COMMENT
 //? PUT api/update/:id
+router.put("/update/:id", (req,res) => {
+    try {
+        const { id } = req.params
+        const api = read(apiPath)
+        // Find te index of the comment that we need from the database
+        const found = api.findIndex(comment => comment.post_id === id)
+        
+        api[found].title = req.body.title ?? api[found].title  // Update the title of the found element with the value from the request body, 
+                                                               // or keep the original title if the request body does not contain a title
+        api[found].author = req.body.author ?? api[found].author 
+        api[found].body = req.body.body ?? api[found].body
 
+        save(api, apiPath)
+
+        res.status(200).json({
+            message: 'Update successful',
+            data: api[found]
+        })
+    } catch(err) {
+        console.log(err)
+        res.status(500).json({
+            message: `${err}`
+        })
+    }
+})
 
 // endpoint - DELETE COMMENT
 //? DELETE api/delete/:id
+// router.delete("/:id", (req, res) => {
+//     try{
+//         const { id } = req.params
+//         const api = read(apiPath)
+//         const itemRequested = api.find(comment => comment.post_id === id)
+//         if (!itemRequested) throw Error("No comment found")
+//         const deleted = api.splice()
+//         res.status(200).json({
 
+//         })
+
+//     }catch(err){}
+// })
 
 
 
