@@ -64,6 +64,8 @@ router.put("/update/:id", (req,res) => {
         const api = read(apiPath)
         // Find te index of the comment that we need from the database
         const found = api.findIndex(comment => comment.post_id === id)
+
+        if (found === -1) throw Error(`${id} not found`)
         
         api[found].title = req.body.title ?? api[found].title  // Update the title of the found element with the value from the request body, 
                                                                // or keep the original title if the request body does not contain a title
@@ -86,19 +88,25 @@ router.put("/update/:id", (req,res) => {
 
 // endpoint - DELETE COMMENT
 //? DELETE api/delete/:id
-// router.delete("/:id", (req, res) => {
-//     try{
-//         const { id } = req.params
-//         const api = read(apiPath)
-//         const itemRequested = api.find(comment => comment.post_id === id)
-//         if (!itemRequested) throw Error("No comment found")
-//         const deleted = api.splice()
-//         res.status(200).json({
+router.delete("/delete/:id", (req, res) => {
+    try{
+        const { id } = req.params
+        let api = read(apiPath)
+        const updatedApi = api.filter(comment => comment.post_id !== id)
+        
+        if (api.length === updatedApi.length) throw Error ("Id not found")
 
-//         })
-
-//     }catch(err){}
-// })
+        save(updatedApi, apiPath) 
+        res.status(200).json({
+            message: "'Deletion successful"
+        })
+    }catch(err){
+        console.log(err)
+        res.status(500).json({
+            message: `${err}`
+        })
+    }
+})
 
 
 
